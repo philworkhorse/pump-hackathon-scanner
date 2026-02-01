@@ -1,1 +1,1 @@
-worker: ./pump-scanner
+worker: ./out
