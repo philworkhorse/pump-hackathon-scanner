@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -27,8 +26,6 @@ const (
 var (
 	TelegramBotToken = getEnv("TELEGRAM_BOT_TOKEN", "8470861101:AAG79HG58KZSKnlG6dU3m-cSRDvreNXzm6o")
 	TelegramChatID   = getEnv("TELEGRAM_CHAT_ID", "7126127814")
-	ProxyFile        = getEnv("PROXY_FILE", "/Users/trentishee-dunn/.clawdbot/media/inbound/a38e3085-15eb-46f5-92da-87aa0ff66c2f.txt")
-	ProxyList        = getEnv("PROXY_LIST", "") // Comma-separated proxies as alternative
 )
 
 func getEnv(key, fallback string) string {
@@ -81,32 +78,8 @@ var (
 )
 
 func loadProxies() {
-	// Try comma-separated list first (for Railway env)
-	if ProxyList != "" {
-		for _, p := range strings.Split(ProxyList, ",") {
-			p = strings.TrimSpace(p)
-			if p != "" {
-				proxies = append(proxies, p)
-			}
-		}
-		return
-	}
-
-	// Try file
-	file, err := os.Open(ProxyFile)
-	if err != nil {
-		fmt.Printf("   No proxy file found, running direct\n")
-		return
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line != "" {
-			proxies = append(proxies, line)
-		}
-	}
+	// Use hardcoded proxies
+	proxies = hardcodedProxies
 }
 
 func getNextProxy() string {
