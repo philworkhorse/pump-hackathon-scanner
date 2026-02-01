@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	PollInterval    = 3 * time.Second
+	PollInterval    = 1 * time.Second
 	CoinsPerRequest = 48
 	TotalCoins      = 480
 	RequestTimeout  = 8 * time.Second
