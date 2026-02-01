@@ -17,8 +17,8 @@ import (
 
 const (
 	PollInterval    = 3 * time.Second
-	CoinsPerRequest = 50
-	TotalCoins      = 500
+	CoinsPerRequest = 48
+	TotalCoins      = 480
 	RequestTimeout  = 8 * time.Second
 )
 
@@ -254,7 +254,7 @@ func fetchCoinsPage(offset int, wg *sync.WaitGroup, results chan<- []Coin) {
 		client = &http.Client{Timeout: RequestTimeout}
 	}
 
-	apiURL := fmt.Sprintf("https://frontend-api-v3.pump.fun/coins/for-you?limit=%d&offset=%d", CoinsPerRequest, offset)
+	apiURL := fmt.Sprintf("https://frontend-api-v3.pump.fun/coins?offset=%d&limit=%d&sort=market_cap&includeNsfw=false&order=DESC", offset, CoinsPerRequest)
 
 	req, err := http.NewRequest("GET", apiURL, nil)
 	if err != nil {
@@ -262,9 +262,19 @@ func fetchCoinsPage(offset int, wg *sync.WaitGroup, results chan<- []Coin) {
 		return
 	}
 
-	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Accept", "*/*")
+	req.Header.Set("Accept-Language", "en-US,en;q=0.9")
+	req.Header.Set("Cache-Control", "no-cache")
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Origin", "https://pump.fun")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+	req.Header.Set("Pragma", "no-cache")
+	req.Header.Set("Sec-Ch-Ua", `"Not(A:Brand";v="8", "Chromium";v="144", "Google Chrome";v="144"`)
+	req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
+	req.Header.Set("Sec-Ch-Ua-Platform", `"Windows"`)
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "same-site")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36")
 
 	resp, err := client.Do(req)
 	if err != nil {
